@@ -1,22 +1,12 @@
-// RangeGrid.jsx
-// -----------------------------------------------------------------------------
-// Renders the 13x13 poker hand grid.
+// FILE: RangeGrid.jsx
+// TYPE: React component module
 //
-// Props:
-// - range: the full range JSON
-// - onPaint(handKey, paintValue): callback to paint a hand
-// - paintValue: [{action, weight}, ...] that should be applied to a hand
-// - onSelectHand(handKey): optional callback when user selects a hand
-// - selectedHand: which hand is currently selected (for UI highlight)
+// Contains:
+// - stackedBackground() -> FUNCTION
+// - RangeGrid()         -> REACT COMPONENT
 //
-// UI behavior:
-// - Left click paints the cell.
-// - Drag (mouse enter with button pressed) paints multiple hands.
-// - Right click selects a cell without painting.
-//
-// Each cell background is a linear gradient (stacked colors) representing the
-// action weights (e.g. 50% OPEN + 50% FOLD).
-// -----------------------------------------------------------------------------
+// Props (inputs):
+// - range, onPaint, paintValue, onSelectHand, selectedHand
 
 import React from 'react';
 import { allHands13x13 } from '../range/grid.js';
@@ -25,6 +15,7 @@ import { getHand } from '../range/model.js';
 
 const { hands } = allHands13x13();
 
+// FUNCTION: builds a CSS gradient from [{action, weight}]
 function stackedBackground(actions) {
   // actions: [{action, weight}] sum=100
   const stops = [];
@@ -39,6 +30,7 @@ function stackedBackground(actions) {
   return `linear-gradient(90deg, ${stops.join(', ')})`;
 }
 
+// REACT COMPONENT (function component)
 export default function RangeGrid({ range, onPaint, paintValue, onSelectHand, selectedHand }) {
   return (
     <div className="grid">

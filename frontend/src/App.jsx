@@ -1,18 +1,9 @@
-// App.jsx
-// -----------------------------------------------------------------------------
-// This is the main React component (the "page") for the Poker Range Tool.
+// FILE: App.jsx
+// TYPE: React function component module
 //
-// Key idea:
-// - The UI (React) stores the current range JSON in state.
-// - The backend (Java/Spring Boot) validates + persists that JSON.
-// - The UI can load a saved range back from the API.
-//
-// If you're new to React:
-// - There are NO "classes" here. This project uses FUNCTION COMPONENTS.
-// - "Props" are inputs to a component (attributes in JSX).
-// - "State" is component-local data that can change.
-//   When state changes, React re-renders the UI.
-// -----------------------------------------------------------------------------
+// Contains:
+// - buildPaintActions()  -> FUNCTION
+// - App()                -> REACT COMPONENT (function component)
 
 import { useEffect, useMemo, useState } from 'react';
 import './App.css';
@@ -39,6 +30,7 @@ import { createRange, deleteRange, getRange, listRanges, updateRange, validateRa
  *
  * The output must be an array of `{ action, weight }` where weights sum to 100.
  */
+// FUNCTION: converts sidebar layers -> paint actions (weights sum to 100)
 function buildPaintActions(layers) {
   const nonZero = layers
     .map((l) => ({ action: l.action, weight: Math.max(0, Number(l.pct) || 0) }))
@@ -58,6 +50,7 @@ function buildPaintActions(layers) {
   return scaled;
 }
 
+// REACT COMPONENT (function component)
 export default function App() {
   // ----------------------
   // State (frontend source of truth while editing)
@@ -69,13 +62,13 @@ export default function App() {
   //   name: string,
   //   hands: { [handKey: string]: [{action, weight}, ...] }
   // }
+  // HOOK: useState (state variable + setter)
   const [range, setRangeState] = useState(() => makeEmptyRange('My Range'));
 
-  // Which hand is currently selected (for display only).
+  // HOOK: useState
   const [selectedHand, setSelectedHand] = useState('AKs');
 
-  // "Layers" in the sidebar (4 layers like your python builder).
-  // The user edits these, then we paint them into hands.
+  // HOOK: useState (array state)
   const [layers, setLayers] = useState([
     { action: 'OPEN', pct: 100 },
     { action: 'CALL', pct: 0 },
@@ -96,9 +89,10 @@ export default function App() {
   // ----------------------
 
   // What we paint into a hand when clicking on the grid.
+  // HOOK: useMemo (derived value)
   const paintValue = useMemo(() => buildPaintActions(layers), [layers]);
 
-  // Compute stats on the client (VPIP + per-action distribution).
+  // HOOK: useMemo (derived value)
   const stats = useMemo(() => computeStats(range), [range]);
 
   // Helper setter: lets us pass functions into setRange.
@@ -125,7 +119,7 @@ export default function App() {
     }
   }
 
-  // On first render: try to fetch saved ranges.
+  // HOOK: useEffect (runs after first render)
   useEffect(() => {
     refreshList();
   }, []);
