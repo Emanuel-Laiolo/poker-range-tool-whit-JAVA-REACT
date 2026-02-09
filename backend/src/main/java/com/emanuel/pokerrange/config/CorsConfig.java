@@ -8,6 +8,18 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+/**
+ * CORS configuration
+ * ---------------------------------------------------------------------------
+ * Browsers block cross-origin requests by default.
+ *
+ * In development:
+ * - Frontend runs on http://localhost:5173
+ * - Backend runs on http://localhost:8080
+ *
+ * This filter allows requests from localhost ports.
+ * (Additionally, Vite uses a proxy so frontend can call /api without CORS.)
+ */
 @Configuration
 public class CorsConfig {
   @Bean

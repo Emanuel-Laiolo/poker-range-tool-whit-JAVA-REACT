@@ -11,6 +11,20 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * RangeEntity
+ * ---------------------------------------------------------------------------
+ * This is the database representation.
+ *
+ * We keep it simple:
+ * - id: UUID primary key
+ * - name: string
+ * - payloadJson: the full range JSON stored as a text blob
+ * - createdAt/updatedAt timestamps
+ *
+ * The payload is stored as JSON text so we can evolve the payload format.
+ * In a production app, you might normalize it into tables.
+ */
 @Entity
 @Table(name = "ranges")
 public class RangeEntity {

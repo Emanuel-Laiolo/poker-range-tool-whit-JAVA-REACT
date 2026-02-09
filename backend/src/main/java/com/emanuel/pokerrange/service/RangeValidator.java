@@ -9,14 +9,20 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * RangeValidator
+ * ---------------------------------------------------------------------------
+ * "Contract rules" that must be true for every range.
+ *
+ * This is what you would describe as "business validation".
+ *
+ * Rules enforced here:
+ * - Every hand has at least one action
+ * - No duplicate actions for the same hand
+ * - For each hand, weights sum to 100 (+/- epsilon)
+ */
 @Component
 public class RangeValidator {
-  /**
-   * Validates:
-   * - each hand has non-empty actions
-   * - weights are within 0..100 (also covered by bean validation)
-   * - sum of weights per hand is 100 (+/- epsilon)
-   */
   public void validateOrThrow(RangePayloadDto payload) {
     for (Map.Entry<String, List<HandActionDto>> e : payload.hands().entrySet()) {
       String hand = e.getKey();
@@ -26,12 +32,13 @@ public class RangeValidator {
         throw new IllegalArgumentException("Hand '" + hand + "' must have at least one action");
       }
 
+      // 1) Sum weights
       double sum = actions.stream().mapToDouble(a -> a.weight() == null ? 0 : a.weight()).sum();
       if (Math.abs(sum - 100.0) > 0.0001) {
         throw new IllegalArgumentException("Hand '" + hand + "' weights must sum to 100 (got " + sum + ")");
       }
 
-      // Optional: disallow duplicates of the same action.
+      // 2) No duplicate action types
       var seen = new java.util.HashSet<ActionType>();
       for (var a : actions) {
         if (!seen.add(a.action())) {
@@ -41,6 +48,10 @@ public class RangeValidator {
     }
   }
 
+  /**
+   * Compute average distribution per action across all hands.
+   * This returns % values (0..100) averaged per hand.
+   */
   public Map<ActionType, Double> computeActionTotals(RangePayloadDto payload) {
     Map<ActionType, Double> totals = new EnumMap<>(ActionType.class);
     for (var action : ActionType.values()) totals.put(action, 0.0);
@@ -48,13 +59,14 @@ public class RangeValidator {
     int handCount = payload.hands().size();
     if (handCount == 0) return totals;
 
+    // Sum all weights
     for (var entry : payload.hands().entrySet()) {
       for (var a : entry.getValue()) {
         totals.put(a.action(), totals.getOrDefault(a.action(), 0.0) + a.weight());
       }
     }
 
-    // Convert to % across entire grid (avg per hand).
+    // Convert totals -> average per hand
     for (var action : ActionType.values()) {
       totals.put(action, totals.get(action) / handCount);
     }
@@ -62,8 +74,8 @@ public class RangeValidator {
     return totals;
   }
 
+  /** VPIP = any non-FOLD action (simplified definition). */
   public double computeVpip(Map<ActionType, Double> byAction) {
-    // VPIP = any action except fold (simple definition).
     double vpip = 0.0;
     for (var e : byAction.entrySet()) {
       if (e.getKey() != ActionType.FOLD) vpip += e.getValue();

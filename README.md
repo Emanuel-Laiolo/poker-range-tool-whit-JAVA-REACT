@@ -41,4 +41,5 @@ A range payload is:
 ```
 
 ## Interview notes
-See `INTERVIEW_ROADMAP.md`.
+- `INTERVIEW_ROADMAP.md`
+- `docs/ROADMAP_JAVA_REACT_API.md` (how React connects to Java API)
