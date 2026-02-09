@@ -9,7 +9,7 @@ This is a short, *demo-friendly* plan you can use to explain what you built and 
   - `tools/range_builder/builder.py`
 
 ### 30-second story
-> “I’m building a Poker Range Tool with a React UI and a Java backend. To accelerate creating real range data, I included my Python Range Builder app that exports JSON. Next steps are defining a JSON format contract, then building endpoints and UI around it.”
+> “I’m building a Poker Range Tool with a React UI and a Java backend. I started by defining a shared JSON contract for ranges, then built a Spring Boot API (CRUD + validation + stats) and a React editor (13x13 grid, multi-action weights, import/export). I also kept the original Python builder in the repo as a reference and to generate realistic test data fast.”
 
 ---
 
@@ -28,6 +28,8 @@ This is a short, *demo-friendly* plan you can use to explain what you built and 
 ---
 
 ## 2) Next changes (roadmap of the project)
+
+**Update (implemented):** this repository now includes a real Spring Boot API + a React range editor (multi-action weights) so you can demo end-to-end.
 
 ### Phase 1 — Define data contract (1–2 hours)
 - Create a shared spec file, e.g. `docs/range-format.md`.
